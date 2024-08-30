@@ -27,7 +27,16 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
+        int layerComponent = LayerMask.NameToLayer("Component");
+        int layerBloodVessels = LayerMask.NameToLayer("BloodVessels");
+        int layerCell = LayerMask.NameToLayer("Cell");
+        int layerMedicine = LayerMask.NameToLayer("Medicine");
+
+        Physics2D.IgnoreLayerCollision(layerComponent, layerBloodVessels);
+        Physics2D.IgnoreLayerCollision(layerComponent, layerCell);
+        Physics2D.IgnoreLayerCollision(layerComponent, layerMedicine);
+
     }
 
     // Update is called once per frame
@@ -42,11 +51,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void createCell()
+    public GameObject createCell()
     {
         GameObject cell = pool.Get(Random.Range(0,10));
-        cell.GetComponent<SpriteRenderer>().sortingOrder = 1;
+        
         SpriteRenderer sp = cell.GetComponent<SpriteRenderer>();
+
+        sp.sortingOrder = 1;
+
         Vector2 pos = Vector2.zero;
 
         Bounds bounds = startArea.GetComponent<BoxCollider2D>().bounds;
@@ -56,6 +68,24 @@ public class GameManager : MonoBehaviour
 
         cell.GetComponent<Cell>().direction = Vector2.left;
         cell.GetComponent<Cell>().speed = Random.Range(1f, 2f);
+
+        return cell;
+
+    }
+
+    public GameObject createBullet(int id)
+    {
+        GameObject bullet = pool.Get(id);
+
+        SpriteRenderer sp = bullet.GetComponent<SpriteRenderer>();
+
+        sp.sortingOrder = 1;
+        
+        Vector2 pos = Vector2.zero;
+        pos += player.directionVec * 0.5f;
+        bullet.transform.position = pos;
+
+        return bullet;
 
     }
 

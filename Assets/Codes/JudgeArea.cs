@@ -38,8 +38,8 @@ public class JudgeArea : MonoBehaviour
                 break;
             case JudgeAreaType.END:
                 {
-                    box.size = new Vector2(2f, height * 1.5f);
-                    box.offset = new Vector2(-(width + box.size.x) / 2f - 1.5f, 0f);
+                    box.size = new Vector2(width * 1.5f, height * 1.5f);
+                    box.offset = Vector2.zero;
                 }
                 break;
         }

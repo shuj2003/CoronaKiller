@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 3920704666120715314}
   - component: {fileID: 1836552095085618070}
   - component: {fileID: 1775951792167009140}
-  m_Layer: 0
+  - component: {fileID: 4682571775885170448}
+  m_Layer: 10
   m_Name: Medicine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -134,4 +135,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   variableJoystick: {fileID: 0}
-  inputVec: {x: 0, y: 0}
+  directionVec: {x: 0, y: 0}
+--- !u!114 &4682571775885170448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5114976230745828314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b4ff8d0726b7a64abb8e308291adb0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponDatas: []

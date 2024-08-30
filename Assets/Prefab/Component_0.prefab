@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 4057132596548188129}
   - component: {fileID: 8521120062765759404}
   - component: {fileID: 802931122536738208}
-  m_Layer: 0
-  m_Name: Component
+  m_Layer: 6
+  m_Name: Component_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -121,6 +121,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37b67eba817e1cf46bccc510eababe6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  power: 0
+  speed: 0
+  directionVec: {x: 0, y: 0}
 --- !u!58 &8521120062765759404
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -182,4 +185,4 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
