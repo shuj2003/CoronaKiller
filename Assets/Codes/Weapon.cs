@@ -44,7 +44,7 @@ public class Weapon : MonoBehaviour
                 }
             }
 
-            GameObject bullet = GameManager.instance.createBullet(prefabId);
+            GameObject bullet = GameManager.instance.CreateBullet(prefabId);
             Component component = bullet.GetComponent<Component>();
             component.speed = weaponSpeed;
             component.power = weaponPower;

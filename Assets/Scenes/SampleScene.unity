@@ -654,6 +654,8 @@ MonoBehaviour:
   - {fileID: 7087826838957964980, guid: 12b6f67f6d3f944409781941e45a6a25, type: 3}
   - {fileID: 401321077252625548, guid: ab3ed4e3ce9565f47b03939a420cfd44, type: 3}
   - {fileID: 5565937119240475058, guid: 92e5c22d95835d340a3dc46cf364803f, type: 3}
+  - {fileID: 2149145323895389791, guid: 0cecf320bb9ed254ebd3b1f3d1a2c27a, type: 3}
+  - {fileID: 3266163245726057889, guid: 58308f3b422f74e4bb33837f5aa57c2c, type: 3}
 --- !u!4 &885000203
 Transform:
   m_ObjectHideFlags: 0
@@ -810,6 +812,10 @@ PrefabInstance:
     - target: {fileID: 5485193008579230814, guid: b6aaf5e183d23274bac8f9ea942fac95, type: 3}
       propertyPath: m_Name
       value: BloodVessels
+      objectReference: {fileID: 0}
+    - target: {fileID: 5485193008579230814, guid: b6aaf5e183d23274bac8f9ea942fac95, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6552539682473822200, guid: b6aaf5e183d23274bac8f9ea942fac95, type: 3}
       propertyPath: m_LocalPosition.x

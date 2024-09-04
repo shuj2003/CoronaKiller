@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1254253899620531092}
   - component: {fileID: 1699321280974328832}
   - component: {fileID: 5660976903698779614}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: BloodVessels
   m_TagString: Untagged
   m_Icon: {fileID: 0}

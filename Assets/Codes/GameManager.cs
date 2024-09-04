@@ -33,9 +33,9 @@ public class GameManager : MonoBehaviour
         int layerCell = LayerMask.NameToLayer("Cell");
         int layerMedicine = LayerMask.NameToLayer("Medicine");
 
-        Physics2D.IgnoreLayerCollision(layerComponent, layerBloodVessels);
-        Physics2D.IgnoreLayerCollision(layerComponent, layerCell);
-        Physics2D.IgnoreLayerCollision(layerComponent, layerMedicine);
+        //Physics2D.IgnoreLayerCollision(layerComponent, layerBloodVessels);
+        //Physics2D.IgnoreLayerCollision(layerComponent, layerCell);
+        //Physics2D.IgnoreLayerCollision(layerComponent, layerMedicine);
 
     }
 
@@ -46,12 +46,13 @@ public class GameManager : MonoBehaviour
 
         if (gameTime >= 2f)
         {
-            createCell();
+            CreateCell();
+            CreateCorona();
             gameTime = 0f;
         }
     }
 
-    public GameObject createCell()
+    public GameObject CreateCell()
     {
         GameObject cell = pool.Get(Random.Range(0,10));
         
@@ -73,7 +74,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public GameObject createBullet(int id)
+    public GameObject CreateBullet(int id)
     {
         GameObject bullet = pool.Get(id);
 
@@ -86,6 +87,30 @@ public class GameManager : MonoBehaviour
         bullet.transform.position = pos;
 
         return bullet;
+
+    }
+
+    public GameObject CreateCorona()
+    {
+        GameObject corona = pool.Get(Random.Range(11, 13));
+
+        Corona corona1 = corona.GetComponent<Corona>();
+        SpriteRenderer sp = corona.GetComponent<SpriteRenderer>();
+
+        sp.sprite = corona1.sprites[Random.Range(0, corona1.sprites.Length)];
+        sp.sortingOrder = 1;
+
+        Vector2 pos = Vector2.zero;
+
+        Bounds bounds = startArea.GetComponent<BoxCollider2D>().bounds;
+
+        pos = new Vector2(bounds.center.x, Random.Range(bounds.min.y, bounds.max.y));
+        corona.transform.position = pos;
+
+        corona.GetComponent<Corona>().direction = Vector2.left;
+        corona.GetComponent<Corona>().speed = Random.Range(1f, 2f);
+
+        return corona;
 
     }
 
