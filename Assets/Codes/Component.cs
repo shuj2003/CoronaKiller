@@ -41,4 +41,16 @@ public class Component : MonoBehaviour
 
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+
+        int layerViruses = LayerMask.NameToLayer("Viruses");
+
+        if (collision.gameObject.layer == layerViruses)
+        {
+            collision.gameObject.GetComponent<Animator>().SetBool("Dead",true);
+        }
+
+    }
+
 }

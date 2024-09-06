@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
         
         SpriteRenderer sp = cell.GetComponent<SpriteRenderer>();
 
-        sp.sortingOrder = 1;
+        sp.sortingOrder = 2;
 
         Vector2 pos = Vector2.zero;
 
@@ -68,7 +68,9 @@ public class GameManager : MonoBehaviour
         cell.transform.position = pos;
 
         cell.GetComponent<Cell>().direction = Vector2.left;
-        cell.GetComponent<Cell>().speed = Random.Range(1f, 2f);
+        cell.GetComponent<Cell>().speed = Random.Range(0.5f, 1f);
+
+        cell.GetComponent<Cell>().Init();
 
         return cell;
 
@@ -80,7 +82,7 @@ public class GameManager : MonoBehaviour
 
         SpriteRenderer sp = bullet.GetComponent<SpriteRenderer>();
 
-        sp.sortingOrder = 1;
+        sp.sortingOrder = 3;
         
         Vector2 pos = Vector2.zero;
         pos += player.directionVec * 0.5f;
