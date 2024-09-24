@@ -8,6 +8,7 @@ public class Common : MonoBehaviour
     {
         float t = curve.Evaluate(time / maxTime);
         if (t > 1f) t = 1f;
+        if (t < 0f) t = 0f;
         return (end - start) * t + start;
     }
 
@@ -18,6 +19,26 @@ public class Common : MonoBehaviour
             return start;
         }
         return end;
+    }
+
+    protected T GetNearest<T>(float diff)
+    {
+        T result = default(T);
+        if(diff < 0f) diff = 0f;
+
+        foreach (T target in GameManager.instance.pool.GetComponentsInChildren<T>())
+        {
+            MonoBehaviour obj = target as MonoBehaviour;
+            float dis = Vector3.Distance(transform.position, obj.transform.position);
+            if (dis < diff)
+            {
+                diff = dis;
+                result = target;
+            }
+        }
+
+        return result;
+
     }
 
 }

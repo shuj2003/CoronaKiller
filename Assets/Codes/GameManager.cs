@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
         
         SpriteRenderer sp = cell.GetComponent<SpriteRenderer>();
 
-        sp.sortingOrder = 2;
+        sp.sortingOrder = 3;
 
         Vector2 pos = Vector2.zero;
 
@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
 
         SpriteRenderer sp = bullet.GetComponent<SpriteRenderer>();
 
-        sp.sortingOrder = 3;
+        sp.sortingOrder = 4;
         
         Vector2 pos = Vector2.zero;
         pos += player.directionVec * 0.5f;
@@ -102,7 +102,7 @@ public class GameManager : MonoBehaviour
         SpriteRenderer sp = corona.GetComponent<SpriteRenderer>();
 
         sp.sprite = corona1.sprites[Random.Range(0, corona1.sprites.Length)];
-        sp.sortingOrder = 1;
+        sp.sortingOrder = 2;
 
         Vector2 pos = Vector2.zero;
 

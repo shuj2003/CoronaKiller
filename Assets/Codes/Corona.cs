@@ -4,7 +4,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class Corona : MonoBehaviour
+public class Corona : Common
 {
     public Sprite[] sprites;
 
@@ -13,6 +13,7 @@ public class Corona : MonoBehaviour
         SEARCHING,
         AIMING,
         ERODING,
+        NONE,
     }
 
     [Header(" # Move Info ")]
@@ -26,25 +27,6 @@ public class Corona : MonoBehaviour
     [Header(" # Object Info ")]
     private Rigidbody2D rigid;
     private Animator animator;
-
-    private Cell GetNearest()
-    {
-        Cell result = null;
-        float diff = 1f;
-
-        foreach (Cell target in GameManager.instance.pool.GetComponentsInChildren<Cell>())
-        {
-            float dis = Vector3.Distance(transform.position, target.transform.position);
-            if (dis < diff)
-            {
-                diff = dis;
-                result = target;
-            }
-        }
-
-        return result;
-
-    }
 
     private void Awake()
     {
@@ -61,7 +43,7 @@ public class Corona : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (actionState == ActionState.AIMING)
+        if (actionState == ActionState.AIMING && target != null)
         {
             direction = target.transform.position - transform.position;
         }
@@ -81,7 +63,7 @@ public class Corona : MonoBehaviour
             
             if(actionState == ActionState.SEARCHING)
             {
-                target = GetNearest();
+                target = GetNearest<Cell>(1f);
                 if(target != null)
                 {
                     actionState = ActionState.AIMING;
@@ -124,6 +106,16 @@ public class Corona : MonoBehaviour
             }
 
         }
+
+    }
+
+    public void PredationFromWBC(Wbc wbc)
+    {
+
+        speed = 0f;
+        actionState = ActionState.NONE;
+        transform.parent = wbc.transform;
+        Destroy(rigid);
 
     }
 
