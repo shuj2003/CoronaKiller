@@ -25,6 +25,7 @@ public class Corona : MonoBehaviour
 
     [Header(" # Object Info ")]
     private Rigidbody2D rigid;
+    private Animator animator;
 
     private Cell GetNearest()
     {
@@ -48,6 +49,7 @@ public class Corona : MonoBehaviour
     private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     // Start is called before the first frame update
@@ -112,11 +114,11 @@ public class Corona : MonoBehaviour
     {
         if (actionState == ActionState.AIMING)
         {
-
             int layerCell = LayerMask.NameToLayer("Cell");
 
             if (collision.gameObject.layer == layerCell)
             {
+                actionState = ActionState.ERODING;
                 transform.parent = collision.gameObject.transform;
                 Destroy(rigid);
             }
@@ -130,6 +132,10 @@ public class Corona : MonoBehaviour
         gameObject.transform.parent = GameManager.instance.pool.transform;
         gameObject.SetActive(false);
 
+    }
+
+    public void Init()
+    {
         actionState = ActionState.SEARCHING;
         target = null;
 
@@ -139,7 +145,6 @@ public class Corona : MonoBehaviour
             rigid.gravityScale = 0f;
             rigid.bodyType = RigidbodyType2D.Dynamic;
         }
-
     }
 
 }

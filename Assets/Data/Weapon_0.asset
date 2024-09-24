@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemType: 0
   basePower: 1
-  baseSpeed: 2
-  baseIntervalTime: 2
+  baseSpeed: 3
+  baseIntervalTime: 1.5
   powers: []
   speeds: []
   intervalTimes: []

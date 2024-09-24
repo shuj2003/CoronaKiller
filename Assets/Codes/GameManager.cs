@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour
         instance = this;
 
         gameTime = 0f;
+
+        Time.timeScale = 1.5f;
     }
 
     // Start is called before the first frame update
@@ -111,6 +113,8 @@ public class GameManager : MonoBehaviour
 
         corona.GetComponent<Corona>().direction = Vector2.left;
         corona.GetComponent<Corona>().speed = Random.Range(1f, 2f);
+
+        corona.GetComponent<Corona>().Init();
 
         return corona;
 
