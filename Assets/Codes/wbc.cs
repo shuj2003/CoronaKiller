@@ -6,6 +6,11 @@ using UnityEngine;
 using UnityEngine.XR;
 using static Corona;
 using static UnityEngine.RuleTile.TilingRuleOutput;
+using static Wbc;
+using Unity.VisualScripting;
+using UnityEngine.U2D.Animation;
+using UnityEditor;
+using System.Linq;
 
 public class Wbc : Common
 {
@@ -17,7 +22,6 @@ public class Wbc : Common
     }
 
     public AnimationCurve legCurve;
-    public GameObject hand;
 
     [Header(" # Move Info ")]
     public Vector2 direction;
@@ -28,19 +32,24 @@ public class Wbc : Common
     public Corona target;
     private Vector3 targetPosBase;
 
-    [Header(" # Object Info ")]
+    [Header(" # Hand Info ")]
+    private List<UnityEngine.Transform> hands;
+    private int handIndex;
     private Vector3 posBase;
     private Vector3 scaleBase;
 
+    [Header(" # Object Info ")]
     private float aniTime = 0f;
     private int setp = 0;
-    private float[] setpTims = { 1f, 0.5f };
+    private float[] setpTims = { 0.6f, 0.9f };
+
+    private SpriteSkin skin;
 
     private void Awake()
     {
-
-        posBase = hand.transform.localPosition;
-        scaleBase = hand.transform.localScale;
+        skin = GetComponent<SpriteSkin>();
+        hands = skin.boneTransforms.ToList();
+        hands.RemoveAt(0);
 
         Init();
 
@@ -49,48 +58,73 @@ public class Wbc : Common
     // Update is called once per frame
     void Update()
     {
-        if (target == null || !target.isActiveAndEnabled)
-        {
-            Init();
-        }
-
-        if (target != null)
-        {
-            direction = target.transform.position - transform.position;
-        }
-        direction = direction.normalized;
+        
 
     }
 
     private void FixedUpdate()
     {
-        if (actionState != ActionState.ERODING)
+        if (target == null || !target.isActiveAndEnabled)
         {
-            Vector3 nextVec = direction.normalized * speed * Time.fixedDeltaTime;
-            transform.position = transform.position + nextVec;
-
-            float angle = Quaternion.Angle(hand.transform.localRotation, Quaternion.LookRotation(Vector3.forward, direction));
-            transform.rotation = Quaternion.Euler(Vector3.forward * angle);
+            //targetが決める　OR　非活性化　時にリセット
+            Init();
         }
 
-        if (actionState == ActionState.SEARCHING)
+        switch (actionState)
         {
-            target = GetNearest<Corona>(10f);
-            if (target != null)
-            {
-                actionState = ActionState.AIMING;
-                speed *= 1.25f;
-            }
-        }
-        else if (actionState == ActionState.AIMING)
-        {
+            case ActionState.SEARCHING://捜索
+                {
+                    target = GetNearest<Corona>(10f);
+                    if (target != null)
+                    {
+                        actionState = ActionState.AIMING;
+                        speed *= 1.2f;
+                    }
+                }
+                break;
+            case ActionState.AIMING://狙い
+                {
+                    target = GetNearest<Corona>(10f);
 
-        }else if (actionState == ActionState.ERODING)
-        {
-            Predation(delegate () {
-                target.GetComponent<Animator>().SetBool("Dead", true);
-                Init();
-            });
+                    handIndex = 0;
+                    UnityEngine.Transform hand = hands[handIndex];
+                    float dis = (hand.position - target.transform.position).sqrMagnitude;
+
+                    for (int i = 1 ; i < hands.Count ; i++ )
+                    {
+                        float dis2 = (hands[i].position - target.transform.position).sqrMagnitude;
+                        if(dis2 < dis)
+                        {
+                            handIndex = i;
+                            dis = dis2;
+                        }
+                    }
+                    hand = hands[handIndex];
+
+                    //targetあった場合、目標へほ法線を計算
+                    direction = target.transform.position - transform.position;
+                    direction = direction.normalized;
+
+                    Vector3 nextVec = direction.normalized * speed * Time.fixedDeltaTime;
+                    transform.position = transform.position + nextVec;
+
+                    float angle = Vector2.SignedAngle(hand.transform.position - transform.position, direction);
+                    float nextAngle = speed * 100f * Time.fixedDeltaTime;
+                    if (nextAngle > Math.Abs(angle)) nextAngle = Math.Abs(angle);
+                    nextAngle = angle < 0f ? nextAngle * -1f : nextAngle;
+                    transform.rotation = transform.rotation * Quaternion.AngleAxis(nextAngle, Vector3.forward);
+
+
+                }
+                break;
+            case ActionState.ERODING://捕食
+                {
+                    Predation(delegate () {
+                        target.GetComponent<Animator>().SetBool("Dead", true);
+                        Init();
+                    });
+                }
+                break;
         }
 
     }
@@ -100,8 +134,10 @@ public class Wbc : Common
         actionState = ActionState.SEARCHING;
         target = null;
         speed = 1.5f;
-        hand.transform.localScale = scaleBase;
-        hand.transform.localPosition = posBase;
+
+        handIndex = 0;
+        posBase = Vector2.zero;
+        scaleBase = Vector2.one;
     }
 
     private void Predation(Action complation)
@@ -110,17 +146,11 @@ public class Wbc : Common
         {
             case 0:
                 {
-                    Vector3 s = ScaleTransform(scaleBase, new Vector3(1.5f, 1f, 1f), aniTime, setpTims[setp], legCurve);
-                    Vector3 p = ScaleTransform(posBase, posBase + new Vector3(0f, -0.31f, 0f), aniTime, setpTims[setp], legCurve);
+                    Vector3 s = ScaleTransform(scaleBase, new Vector3(1.5f, 1.5f, 1f), aniTime, setpTims[setp], legCurve);
+                    Vector3 p = ScaleTransform(posBase, posBase * 2f, aniTime, setpTims[setp], legCurve);
 
-                    hand.transform.localScale = s;
-                    hand.transform.localPosition = p;
-
-                    if (target != null)
-                    {
-                        Vector3 p2 = ScaleTransform(targetPosBase, Vector3.zero, aniTime, setpTims[setp], legCurve);
-                        target.transform.localPosition = p2;
-                    }
+                    hands[handIndex].localScale = s;
+                    hands[handIndex].localPosition = p;
 
                     if (aniTime > setpTims[setp])
                     {
@@ -131,11 +161,14 @@ public class Wbc : Common
                 break;
             case 1:
                 {
-                    Vector3 s = ScaleTransform(scaleBase, new Vector3(1.5f, 1f, 1f), setpTims[setp] - aniTime, setpTims[setp], legCurve);
-                    Vector3 p = ScaleTransform(posBase, posBase + new Vector3(0f, -0.31f, 0f), setpTims[setp] - aniTime, setpTims[setp], legCurve);
+                    Vector3 s = ScaleTransform(scaleBase, new Vector3(1.5f, 1.5f, 1f), setpTims[setp] - aniTime, setpTims[setp], legCurve);
+                    Vector3 p = ScaleTransform(posBase, posBase * 2f, setpTims[setp] - aniTime, setpTims[setp], legCurve);
 
-                    hand.transform.localScale = s;
-                    hand.transform.localPosition = p;
+                    hands[handIndex].localScale = s;
+                    hands[handIndex].localPosition = p;
+
+                    Vector3 p2 = ScaleTransform(targetPosBase, Vector3.zero, aniTime, setpTims[setp], legCurve);
+                    target.transform.localPosition = p2;
 
                     if (aniTime > setpTims[setp])
                     {
@@ -152,17 +185,51 @@ public class Wbc : Common
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<Corona>() == target)
+        switch (actionState)
         {
-            actionState = ActionState.ERODING;
-            aniTime = 0f;
-            setp = 0;
-            speed = 0f;
+            case ActionState.SEARCHING://捜索
+                {
+                }
+                break;
+            case ActionState.AIMING://狙い
+                {
+                    if (collision.gameObject.GetComponent<Corona>() == target)
+                    {
+                        actionState = ActionState.ERODING;
+                        aniTime = 0f;
+                        setp = 0;
 
-            target.PredationFromWBC(this);
-            targetPosBase = target.transform.localPosition;
+                        handIndex = 0;
+                        UnityEngine.Transform hand = hands[handIndex];
+                        float dis = (hand.position - target.transform.position).sqrMagnitude;
 
+                        for (int i = 1; i < hands.Count; i++)
+                        {
+                            float dis2 = (hands[i].position - target.transform.position).sqrMagnitude;
+                            if (dis2 < dis)
+                            {
+                                handIndex = i;
+                                dis = dis2;
+                            }
+                        }
+                        hand = hands[handIndex];
+
+                        posBase = hand.localPosition;
+                        scaleBase = hand.localScale;
+
+                        target.PredationFromWBC(this);
+                        targetPosBase = target.transform.localPosition;
+
+                    }
+
+                }
+                break;
+            case ActionState.ERODING://捕食
+                {
+                }
+                break;
         }
+        
     }
 
 }
